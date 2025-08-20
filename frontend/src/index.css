@@ -1,0 +1,79 @@
+:root {
+  font-family: "Quicksand", "Comic Sans MS", cursive, system-ui, Avenir,
+    Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  color-scheme: light;
+  color: #b499f2;
+  background-color: #fffbe9;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  background: repeating-linear-gradient(
+    to bottom,
+    #fffbe9 0px,
+    #fffbe9 32px,
+    #ffe4fa 33px,
+    #fffbe9 34px
+  );
+}
+
+h1,
+h2 {
+  font-family: "Pacifico", "Quicksand", "Comic Sans MS", cursive, sans-serif;
+  font-size: 2.5em;
+  color: #b499f2;
+  margin-bottom: 0.5em;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px #ffe4fa;
+}
+
+input {
+  border: 1.5px solid #b499f2;
+  border-radius: 8px;
+  padding: 0.6em;
+  font-size: 0.9em;
+  width: 80%;
+  max-width: 400px;
+  background: #fffbe9;
+  font-family: "Quicksand", "Comic Sans MS", cursive, sans-serif;
+  margin-bottom: 0.5em;
+  box-shadow: 0 1px 4px rgba(180, 153, 242, 0.07);
+}
+
+button {
+  border-radius: 8px;
+  border: 2px solid #b499f2;
+  padding: 0.6em 1.2em;
+  font-size: 0.9em;
+  font-weight: 500;
+  font-family: "Quicksand", "Comic Sans MS", cursive, sans-serif;
+  background-color: #ffd6e0;
+  color: #745ca8;
+  cursor: pointer;
+  transition: border-color 0.25s, background 0.25s;
+  box-shadow: 0 1px 4px rgba(180, 153, 242, 0.07);
+}
+button:hover {
+  border-color: #ffd6e0;
+  background-color: #b499f2;
+  color: #fffbe9;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto #b499f2;
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 0.5em auto;
+  }
+}

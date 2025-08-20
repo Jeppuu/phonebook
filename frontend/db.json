@@ -1,0 +1,24 @@
+{
+  "people": [
+    {
+      "id": "1",
+      "name": "Jane Doe",
+      "phone": "040-123456"
+    },
+    {
+      "id": "2",
+      "name": "John Smith",
+      "phone": "040-987654"
+    },
+    {
+      "id": "4",
+      "name": "Bob Brown",
+      "phone": "050-8844332"
+    },
+    {
+      "id": "39c5",
+      "name": "Mickey Mouse",
+      "phone": "009988332"
+    }
+  ]
+}
