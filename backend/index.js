@@ -1,6 +1,5 @@
 const express = require("express");
 const morgan = require("morgan");
-const cors = require("cors");
 
 const app = express();
 
@@ -9,11 +8,11 @@ morgan.token("body", (req) => {
   return req.method === "POST" ? JSON.stringify(req.body) : "";
 });
 
-app.use(cors()); // Enable CORS for all routes
 app.use(express.json()); // Middleware to parse JSON bodies
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
+app.use(express.static("dist"));
 
 let people = [
   { id: "1", name: "Jane Doe", phone: "123-456-7890" },
