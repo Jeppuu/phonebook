@@ -15,8 +15,9 @@ A simple full stack phonebook application to manage your contacts.
 
 ## Deployment
 
-The app will be deployed soon.  
-**Deployed URL:** _To be updated after deployment_
+The app is deployed in Render.
+
+**Deployed URL:** https://phonebook-d8dy.onrender.com/
 
 ## License
 
