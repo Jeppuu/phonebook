@@ -1,5 +1,7 @@
+require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
+const Person = require("./models/person");
 
 const app = express();
 
@@ -8,54 +10,50 @@ morgan.token("body", (req) => {
   return req.method === "POST" ? JSON.stringify(req.body) : "";
 });
 
-app.use(express.json()); // Middleware to parse JSON bodies
+app.use(express.static("dist"));
+app.use(express.json());
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
-app.use(express.static("dist"));
-
-let people = [
-  { id: "1", name: "Jane Doe", phone: "123-456-7890" },
-  { id: "2", name: "John Smith", phone: "987-654-3210" },
-];
-
-const generateId = () => {
-  return String(Math.floor(Math.random() * 10000) + 1);
-};
 
 app.get("/", (req, res) => {
   res.send("<h1>Hello World!</h1>");
 });
 
+// Return the length of the phonebook and current time
 app.get("/info", (req, res) => {
-  res.send(`<h1>Phonebook Information</h1>
-            <p>There are ${people.length} people in the phonebook.</p>
-            <p>${new Date()}</p>`);
+  Person.find({}).then((people) => {
+    res.send(`<h1>Phonebook Information</h1>
+              <p>There are ${people.length} people in the phonebook.</p>
+              <p>${new Date()}</p>`);
+  });
 });
 
 app.get("/api/people", (req, res) => {
-  res.json(people);
+  Person.find({}).then((people) => {
+    res.json(people);
+  });
 });
 
-app.get("/api/people/:id", (req, res) => {
+app.get("/api/people/:id", (req, res, next) => {
   const id = req.params.id;
-  const person = people.find((person) => person.id === id);
-  if (person) {
-    res.json(person);
-  } else {
-    res.status(404).send("Person not found");
-  }
+  Person.findById(id)
+    .then((person) => {
+      if (person) {
+        res.json(person);
+      } else {
+        res.status(404).send("Person not found");
+      }
+    })
+    .catch((error) => next(error));
 });
 
-app.delete("/api/people/:id", (req, res) => {
-  const id = req.params.id;
-  if (!people.some((p) => p.id === id)) {
-    return res.status(404).send(`Person not found with id ${id}`);
-  }
-  people = people.filter((p) => p.id !== id);
-  console.log("Deleted person with id ", id);
-  console.log("Remaining people: ", people);
-  res.status(204).send();
+app.delete("/api/people/:id", (req, res, next) => {
+  Person.findByIdAndDelete(req.params.id)
+    .then((result) => {
+      res.status(204).send();
+    })
+    .catch((error) => next(error));
 });
 
 app.post("/api/people", (req, res) => {
@@ -66,25 +64,52 @@ app.post("/api/people", (req, res) => {
       error: "name or phone missing",
     });
   }
-  if (people.some((p) => p.name === body.name)) {
-    return res.status(400).json({
-      error: "name must be unique",
-    });
-  }
-  const newPerson = {
-    id: generateId(),
+
+  const newPerson = new Person({
     name: body.name,
     phone: body.phone,
-  };
-  people = [...people, newPerson];
+  });
+  newPerson.save().then((savedPerson) => {
+    res.status(201).json(savedPerson);
+  });
+});
 
-  res.status(201).json(newPerson);
+// Update a person's phone number, if that person exists
+app.put("/api/people/:id", (req, res, next) => {
+  const id = req.params.id;
+  const body = req.body;
+
+  if (!body.phone) {
+    return res.status(400).json({
+      error: "phone missing",
+    });
+  }
+
+  Person.findByIdAndUpdate(id, { phone: body.phone }, { new: true })
+    .then((updatedPerson) => {
+      if (updatedPerson) {
+        res.json(updatedPerson);
+      } else {
+        res.status(404).send("Person not found");
+      }
+    })
+    .catch((error) => next(error));
 });
 
 const unknownEndpoint = (req, res) => {
   res.status(404).send({ error: "😵‍💫 unknown endpoint" });
 };
 app.use(unknownEndpoint);
+
+const errorHandler = (error, req, res, next) => {
+  console.error("❗️ Error:", error.message);
+  if (error.name === "CastError") {
+    return res.status(400).send({ error: "malformatted id" });
+  }
+  next(error);
+};
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
