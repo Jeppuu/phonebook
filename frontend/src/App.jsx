@@ -59,13 +59,19 @@ const App = () => {
       phone: newPhone,
     };
 
-    peopleService.addPerson(personObject).then((returnedPerson) => {
-      console.log("Added:", returnedPerson);
-      setPeople(people.concat(returnedPerson));
-      setNewName("");
-      setNewPhone("");
-      changeSnackbarMessage(`Added ${newName} to phonebook.`, "success");
-    });
+    peopleService
+      .addPerson(personObject)
+      .then((returnedPerson) => {
+        console.log("Added:", returnedPerson);
+        setPeople(people.concat(returnedPerson));
+        setNewName("");
+        setNewPhone("");
+        changeSnackbarMessage(`Added ${newName} to phonebook.`, "success");
+      })
+      .catch((error) => {
+        console.error("Error adding person:", error);
+        changeSnackbarMessage(error.response.data.error, "error");
+      });
   };
 
   const handleDeletePerson = (person) => {

@@ -56,7 +56,7 @@ app.delete("/api/people/:id", (req, res, next) => {
     .catch((error) => next(error));
 });
 
-app.post("/api/people", (req, res) => {
+app.post("/api/people", (req, res, next) => {
   const body = req.body;
 
   if (!body.name || !body.phone) {
@@ -69,9 +69,13 @@ app.post("/api/people", (req, res) => {
     name: body.name,
     phone: body.phone,
   });
-  newPerson.save().then((savedPerson) => {
-    res.status(201).json(savedPerson);
-  });
+
+  newPerson
+    .save()
+    .then((savedPerson) => {
+      res.status(201).json(savedPerson);
+    })
+    .catch((error) => next(error));
 });
 
 // Update a person's phone number, if that person exists
@@ -105,6 +109,8 @@ const errorHandler = (error, req, res, next) => {
   console.error("❗️ Error:", error.message);
   if (error.name === "CastError") {
     return res.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return res.status(400).json({ error: error.message });
   }
   next(error);
 };
