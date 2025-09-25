@@ -12,6 +12,7 @@ A simple full stack phonebook application to manage your contacts.
 
 - React / Javascript / Vite
 - Node / Express
+- Mongo DB / Mongoose
 
 ## Deployment
 
